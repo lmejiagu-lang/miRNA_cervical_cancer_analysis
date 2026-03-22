@@ -297,16 +297,16 @@ ggplot(data_matrix_melt, aes(x=Value)) +
 
 # 5.2 Filtros de Muestras -------------------------------------------------
 
-data_filt <- subset(data, select = -c(NIC3_277, NIC3_411))
-dim(data_filt) # 2656 x 71
+data_filt <- subset(data, select = -c(SL_380, NIC1_564, NIC1_113, NIC3_477, NIC3_431, NIC3_411, NIC3_277))
+dim(data_filt)
 
-data_filt <- subset(data, select = -c(NIC3_277, NIC3_411))
+data_filt <- subset(data, select = -c(SL_380, NIC1_564, NIC1_113, NIC3_477, NIC3_431, NIC3_411, NIC3_277)
 
 
 # 5.3 Filtros de Filas ----------------------------------------------------
 
 # Filtro de filas:
-# 1) eliminar filas con suma de conteos < 50 
+# 1) eliminar filas con suma de conteos < 40 
 # 2) eliminar filas con varianza = 0
 # 3) eliminar filas con conteos superiores > 100_000
 
@@ -337,12 +337,12 @@ suma_fila <- rowSums(data_filt)
 var_fila <- rowVars(as.matrix(data_filt))
 conteo_max <- apply(data_filt, 1, max)
 
-data_filt <- data_filt[suma_fila >= 50 &
+data_filt <- data_filt[suma_fila >= 40 &
              var_fila > 0 &
              conteo_max < 1e5,]
 
 dim(data)      # 2656 x 73
-dim(data_filt) # 669 x 71, nos quedamos con 669 miRNA y 71 muestras
+dim(data_filt) 
 
 # boxplot filtrado
 boxplot(data_filt, pch=20)
@@ -464,7 +464,7 @@ pheatmap(as.matrix(data_filt[1:50,]))
 # 7. Comparar NIC< contra NIC2/NIC3 --------------------------------------------------
 library(DESeq2)
 
-dim(data_filt)   # 669 x 71
+dim(data_filt)   
 
 lesion <- sub("_.*", "", colnames(data_filt))
 table(lesion)
@@ -481,18 +481,6 @@ coldata2$condition2 <- factor( c(rep('NIC3',25), rep('NIC2',10), rep('SL/NIC1', 
 coldata2$condition1 <- relevel(coldata2$condition1, ref = 'SL/NIC1') # nivel de ref
 coldata2$condition2 <- relevel(coldata2$condition2, ref = 'SL/NIC1') # nivel de ref
 rownames(coldata2) <- colnames(data_filt)
-
-# Tabla de contigenicas
-table(coldata2$condition1, coldata2$VPH_16_18)
-#            16/18  Otros
-# SL/NIC1    12     24
-# NIC2/3     11     24
-
-table(coldata2$condition2, coldata2$VPH_16_18)
-#            16/18  Otros
-# SL/NIC1    12     24
-# NIC2        4      6
-# NIC3        7     18
 
 
 ## 7.1 Primera Comparacion -------------------------------------------------
